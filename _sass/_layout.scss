@@ -1,0 +1,80 @@
+body {
+  background: url('/images/background.png');
+}
+
+.outer {
+  margin: 0 auto;
+  width: 1080px;
+  padding: 80px 0 80px 0;
+}
+
+html, body, .outer {
+  height: 100%;
+}
+
+body {
+  font-family: Vollkorn,serif;
+}
+
+#ditmar-face {
+  position: relative;
+  z-index: 2;
+
+  border-radius: 50%;
+  border: 10px solid #93E1D5;
+  float: left;
+}
+
+#ditmar-says-outer {
+  position: relative;
+  z-index: 1;
+
+  float: left;
+  margin-left: -40px;
+  padding-top: 1em;
+  width: 800px;
+}
+
+#next-button {
+  float: right;
+  margin-bottom: 1em;
+
+  -webkit-box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+  -moz-box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+  box-shadow:rgba(0,0,0,0.2) 0 1px 0 0;
+  color:#333;
+  background-color:#FA2;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border:none;
+  font-size:16px;
+  font-weight:700;
+  height:36px;
+  padding:4px 16px;
+  text-shadow:#FE6 0 1px 0
+}
+
+button:focus {
+  outline: none;
+}
+
+#ditmar-says {
+  clear: right;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  border: 4px solid #B6E0DA;
+  color: #333;
+  font-size: 24px;
+  padding: 1em 1em 0.3em 64px;
+}
+
+#ditmar-says > * {
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+
+#ditmar-says {
+  -webkit-transition: height 0.3s;
+  transition: height 0.3s;
+}

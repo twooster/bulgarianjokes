@@ -1,0 +1,180 @@
+---
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Ditmar will tell you a joke</title>
+    <meta name="description" content="Ditmar tells Bulgarian jokes">
+
+    <link rel="stylesheet" href="/css/main.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Vollkorn' rel='stylesheet' type='text/css'>
+  </head>
+
+  <body>
+    <div class="outer">
+        <img src="images/ditmar-thinks.gif" id="ditmar-face">
+        <div id="ditmar-says-outer">
+          <button id="next-button">Hmm...</button>
+          <div id="ditmar-says">
+            Let me think...
+          </div>
+        </div>
+    </div>
+
+    <script>
+      !function(){
+        var intros = {{ site.data.leadins | jsonify }};
+        var jokes = {{ site.data.jokes | jsonify }};
+
+        function escapeHTML(str)
+        {
+          var pre = document.createElement('pre');
+          var text = document.createTextNode(str);
+          pre.appendChild(text);
+          return pre.innerHTML;
+        }
+
+        function htmlize(text) {
+          var split = escapeHTML(text.replace(/\n+/g, "\n")).split("\n");
+          return ['<p>', split.join('</p><p>'), '</p>'].join('');
+        }
+
+        for (var i = 0; i < jokes.length; ++i) {
+          var joke = jokes[i];
+          if (!(joke instanceof Array)) {
+            joke = [joke];
+            jokes[i] = joke;
+          }
+
+          for (var j = 0; j < joke.length; ++j) {
+            joke[j] = htmlize(joke[j]);
+          }
+        }
+
+        for (var i = 0; i < intros.length; ++i) {
+          intros[i] = htmlize(intros[i]);
+        }
+
+        function yatesShuffle(array) {
+          var counter = array.length;
+          var temp;
+          var index;
+
+          while (counter > 0) {
+              index = Math.floor(Math.random() * counter);
+
+              counter--;
+
+              temp = array[counter];
+              array[counter] = array[index];
+              array[index] = temp;
+          }
+
+          return array;
+        }
+
+        jokes = yatesShuffle(jokes);
+        intros = yatesShuffle(intros);
+
+        var ditmarSays = document.getElementById('ditmar-says');
+        var ditmarFace = document.getElementById('ditmar-face');
+        var nextButton = document.getElementById('next-button');
+
+        var introCounter = 0;
+        var jokeCounter = 0;
+
+        var jokeStateCounter = 0;
+
+        var state = 0;
+        var paused = false;
+
+        function animateHTML(html) {
+          var children = ditmarSays.children;
+          var childCount = children.length;
+
+          if (childCount === 0) {
+            ditmarSays.innerHTML = html;
+            return;
+          }
+
+          var ended = 0;
+
+          paused = true;
+          for (var i = 0; i < childCount; ++i) {
+            !function() {
+              var child = children[i];
+              var listener = child.addEventListener('transitionend', function() {
+                child.removeEventListener('transitionend', listener);
+                ++ended;
+                if (ended === childCount) {
+                  ditmarSays.innerHTML = html;
+                  paused = false;
+                }
+              }, false);
+              child.style.opacity = 0.0;
+            }();
+          }
+        }
+
+        function advanceState() {
+          if (paused) { return; }
+
+          if (state === 0) {
+            ditmarFace.src = 'images/ditmar-thinks.gif';
+            nextButton.innerText = 'Tell me a joke!'
+            animateHTML(intros[introCounter]);
+
+            introCounter = (introCounter + 1) % intros.length;
+            state = 1;
+            jokeStateCounter = 0;
+          } else if (state === 1) {
+            var joke = jokes[jokeCounter];
+
+            if (jokeStateCounter === 0) {
+              ditmarFace.src = 'images/ditmar-tells.gif';
+            }
+            animateHTML(joke[jokeStateCounter]);
+            ++jokeStateCounter;
+
+            if (jokeStateCounter === joke.length) {
+              nextButton.innerText = 'That was a good one!';
+              jokeCounter = (jokeCounter + 1) % jokes.length;
+              state = 2;
+            } else {
+              nextButton.innerText = '...';
+            }
+          } else {
+            animateHTML('<p>Ahahahaha. Fun stuff, man.</p>');
+            ditmarFace.src = 'images/ditmar-laughs.gif';
+            nextButton.innerText = 'Tell me another!';
+            state = 0;
+          }
+        }
+
+        nextButton.addEventListener('click', advanceState);
+
+        var pressed = false;
+        document.addEventListener('keydown', function(e) {
+          if (e.keyCode === 39 && !pressed) {
+            advanceState();
+            pressed = true;
+          }
+        });
+
+        document.addEventListener('keyup', function(e) {
+          if (e.keyCode === 39) {
+            pressed = false;
+          }
+        });
+
+        // Reset to default state
+        advanceState();
+      }();
+    </script>
+  </body>
+</html>

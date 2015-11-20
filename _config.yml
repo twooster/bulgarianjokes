@@ -1,0 +1,10 @@
+# Site settings
+title: "Ditmar's Bulgarian Jokes"
+email: ditmar@bulgarianjokes.com
+description: >
+  Ditmar will tell you a Bulgarian joke. Laugh!
+baseurl: ""
+url: "http://bulgarianjokes.com"
+
+# Build settings
+markdown: kramdown
